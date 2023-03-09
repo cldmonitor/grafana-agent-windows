@@ -1,1 +1,1 @@
-# grafana-agent-windows
+# Install Grafana Agent on Windows Server
