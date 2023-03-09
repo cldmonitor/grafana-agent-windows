@@ -1,10 +1,12 @@
 ---
 - name: Install Grafana Agent on Windows
-  hosts: windows
+  hosts: all
   gather_facts: false
   vars:
     script_path: "C:\\tmp\\grafana-windows-install.ps1"
+    installer_path: "C:\\tmp\\grafana-agent-installer.exe"
     config_path: "C:\\tmp\\agent-config.yaml"
+    
 
   tasks:
 
@@ -12,6 +14,11 @@
       win_copy:
         src: "files/grafana-windows-install.ps1"
         dest: "{{ script_path }}"
+
+    - name: Copy Grafana Agent Installer to remote server
+      win_copy:
+        src: "files/grafana-windows-install.ps1"
+        dest: "{{ installer_path }}"
 
     - name: Copy dummy Config file to remote server
       win_copy:
