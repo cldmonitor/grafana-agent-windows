@@ -13,29 +13,11 @@ if ( -Not [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).gro
     exit
 }
 
-# Download and Install Grafana Agent
-
-Write-Host "Downloading Grafana agent Windows Installer"
-
-$DOWLOAD_URL = "https://github.com/grafana/agent/releases/latest/download/grafana-agent-installer.exe.zip"
-$OUTPUT_ZIP_FILE = ".\grafana-agent-installer.exe.zip"
-$OUTPUT_FILE = ".\grafana-agent-installer.exe"
-
-Invoke-WebRequest -Uri $DOWLOAD_URL -OutFile $OUTPUT_ZIP_FILE
-Expand-Archive -LiteralPath $OUTPUT_ZIP_FILE -DestinationPath $OUTPUT_FILE -Force
-
 # Install Grafana agent in silent mode
 Write-Host "Installing Grafana agent for Windows"
 
-Start-Process -FilePath ".\grafana-agent-installer.exe\grafana-agent-installer.exe" -ArgumentList "/S /v/qn" -Wait
+Start-Process -FilePath "C:\tmp\grafana-agent-installer.exe\grafana-agent-installer.exe" -ArgumentList "/S /v/qn" -Wait
 
-
-# Download Dummy Config File
-
-Write-Host "Downloading Dummy Config File"
-
-
-Invoke-WebRequest -Uri "https://github.com/cldmonitor/grafana-agent-windows/releases/download/latest/agent-config.yaml" -OutFile ".\agent-config.yaml"
 
 # Replace Grafana username and API Key
 
@@ -44,12 +26,12 @@ $username = $args[0]
 $password = $args[1]
 
 
-(Get-Content -Path ".\agent-config.yaml") | ForEach-Object { $_ -replace 'dummyuser', $username -replace 'dummypass', $password } | Set-Content -Path ".\agent-config.yaml"
+(Get-Content -Path "C:\tmp\agent-config.yaml") | ForEach-Object { $_ -replace 'dummyuser', $username -replace 'dummypass', $password } | Set-Content -Path "C:\tmp\agent-config.yaml"
  
 Write-Host "Updating Config File"
 
 
-Move-Item ".\agent-config.yaml" "C:\Program Files\Grafana Agent\agent-config.yaml" -Force
+Move-Item "C:\tmp\agent-config.yaml" "C:\Program Files\Grafana Agent\agent-config.yaml" -Force
 
 
 Write-Host "Wait for Grafana service to initialize"
