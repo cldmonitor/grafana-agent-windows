@@ -1,0 +1,27 @@
+---
+- name: Install Grafana Agent on Windows
+  hosts: windows
+  gather_facts: false
+  vars:
+    script_path: "C:\\tmp\\grafana-windows-install.ps1"
+    config_path: "C:\\tmp\\agent-config.yaml"
+
+  tasks:
+
+    - name: Copy PowerShell script to remote server
+      win_copy:
+        src: "files/grafana-windows-install.ps1"
+        dest: "{{ script_path }}"
+
+    - name: Copy dummy Config file to remote server
+      win_copy:
+        src: "files/agent-config.yaml"
+        dest: "{{ config_path }}"
+    
+    - name: Run PowerShell script on remote server
+      win_shell: powershell.exe -ExecutionPolicy Bypass -File "{{ script_path }}" {{ username }} {{ password }}
+      register: ps_output
+    
+    - name: Display PowerShell script output
+      debug:
+        var: ps_output.stdout_lines
